@@ -8,7 +8,7 @@ usuarios = []
 contas_bancarias = []
 quantidade_de_contas = 0
 
-def depositar(valor:int, saldo:vars, extrato): 
+def depositar(saldo, valor, extrato): 
     try:
         valor_deposito = int(valor)
     except ValueError:
@@ -16,21 +16,21 @@ def depositar(valor:int, saldo:vars, extrato):
     else:
         saldo += valor_deposito
         extrato += f'{datetime.datetime.now()} -- Depósito: {valor_deposito}\n'
-        return f'O valor de R${valor} reais foi depositado com sucesso.\nO seu novo saldo é de R${saldo} reais'
+        return saldo
             
-def sacar(valor, saldo, extrato, limite_diario=limite_diario):
-    if limite_diario:
+def sacar(valor, saldo, extrato, limite_diario, numero_saques, limite_valor):
+    if limite_diario-numero_saques:
         try:
             valor_saque = int(valor)
         except ValueError:
             print('O valor informado é inválido')
         else:
             if saldo >= valor_saque:
-                if valor_saque <= 500:
+                if valor_saque <= limite_valor:
                     saldo -= valor_saque
-                    print('O valor informado foi sacado.')
                     extrato += f'{datetime.datetime.now()} -- Saque: {valor_saque}\n'
                     limite_diario -= 1
+                    return f'O seu saque foi realizado com sucesso.\nO seu novo saldo é R${saldo}.\nSaques diários restantes:{limite_diario-numero_saques}.'
                 else:
                     print('Você não pode sacar valores maiores que 500 reais')
             else:
@@ -38,7 +38,7 @@ def sacar(valor, saldo, extrato, limite_diario=limite_diario):
     else:
         print('Já efetuou 3 saques hoje')
     
-def ver_extrato():
+def ver_extrato(saldo, extrato=extrato):
     print(extrato)
     print(f"Saldo: R${saldo}")
 
@@ -61,7 +61,7 @@ def criar_usuario(nome, cpf, rua, numero, bairro,cidade,sigla_estado):
     else:
         print('Já existe um usuário com esse CPF')
 
-def criar_conta(agencia='0001', numero_conta, cpf):
+def criar_conta(cpf, quantidade_de_contas= quantidade_de_contas, agencia='0001' ):
     if str(cpf).isnumeric():
         cpf = int(cpf)
     else:
@@ -69,13 +69,11 @@ def criar_conta(agencia='0001', numero_conta, cpf):
         cpf = str(cpf).replace(".","")
         cpf = int(cpf)
     if verificar_cpf(cpf):
-        contas_bancarias.append({'agencia': agencia, 'numero da conta': numero_conta, 'usuario':cpf})
+        quantidade_de_contas = quantidade_de_contas + 1  
+        contas_bancarias.append({'agencia': agencia, 'numero da conta': quantidade_de_contas, 'usuario':cpf})
     else:
         print(f'O usuário {cpf} não está registrado no nosso banco')
 
 
     
 
-    
-
-print(usuarios)
